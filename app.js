@@ -11,7 +11,7 @@ server.listen(process.env.PORT || 3000, function()
 
 // Create chat bot
 var connector = new builder.ChatConnector
-({ appId: '9590c808-42d9-44a0-adb8-037f3f628a82', appPassword: 'M4k1uzvPqT5mOpommgiQOne' });
+({ appId: process.env.MY_APP_ID, appPassword: process.env.MY_APP_SECRET });
 var bot = new builder.UniversalBot(connector);
 server.post('/API/Messages', connector.listen());
 
@@ -19,3 +19,8 @@ server.post('/API/Messages', connector.listen());
 bot.dialog('/', function (session) {
     session.send("Hello World");
 });
+
+server.get('/', restify.serveStatic({
+ directory: __dirname,
+ default: '/index.html'
+}));
