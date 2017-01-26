@@ -4,7 +4,7 @@ var builder = require('botbuilder');
 
 // Setup Restify Server
 var server = restify.createServer();
-server.listen(process.env.PORT || 3000, function()
+server.listen(process.env.port || process.env.PORT || 3000, function()
 {
    console.log('%s listening to %s', server.name, server.url);
 });
@@ -20,7 +20,7 @@ bot.dialog('/', function (session) {
     session.send("Hello World");
 });
 
-server.get('/', restify.serveStatic({
- directory: __dirname,
- default: '/index.html'
-}));
+// server.get('/', restify.serveStatic({
+//  directory: __dirname,
+//  default: '/index.html'
+// }));
