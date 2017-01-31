@@ -12,6 +12,7 @@
     "azure-cli": "^0.10.8",
     "botbuilder": "^3.5.4",
     "nodemon": "^1.11.0",
-    "restify": "^4.3.0"
+    "restify": "^4.3.0",
+    "tedious": "^1.14.0"
   }
 }
