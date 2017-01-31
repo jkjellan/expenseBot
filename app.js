@@ -1,6 +1,7 @@
 // Add your requirements
 var restify = require('restify');
 var builder = require('botbuilder');
+var tedious = require('tedious');
 
 // Setup Restify Server
 var server = restify.createServer();
@@ -78,7 +79,7 @@ bot.dialog('/',[
         session.send("I can definitely answer your questions about %s",session.userData.qtype);
     }
     else {
-        session.send("I don't know anything about %s and %s",session.userData.qtype,result);
+        session.send("I don't know anything about %s and %s",session.userData.qtype,"Test String");
         session.beginDialog('/');
     }
 }
