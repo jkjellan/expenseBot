@@ -14,10 +14,55 @@ var connector = new builder.ChatConnector({
     appId: process.env.MY_APP_ID, 
     appPassword: process.env.MY_APP_PASSWORD
 });
-
-
 var bot = new builder.UniversalBot(connector);
 server.post('/api/messages', connector.listen());
+
+//connect to database
+var Connection = tedious.Connection;  
+    var config = {  
+        userName: 'sqladmin',  
+        password: 'Pickspockets3',  
+        server: 'expensesbotserver.database.windows.net',  
+        // If you are on Microsoft Azure, you need this:  
+        options: {encrypt: true, database: 'expensesbotdb'}  
+    };  
+    var connection = new Connection(config);  
+    connection.on('connect', function(err) {  
+        // If no error, then good to proceed.  
+        console.log("Database Connected");  
+        executeStatement();  
+    });  
+
+//query database
+    var Request = tedious.Request;  
+    var TYPES = tedious.TYPES;  
+  
+    var sql = "Test String";
+    var result = "";
+    
+    function executeStatement() {  
+        request = new Request("SELECT Sum(Plan$) FROM [dbo].['PIXP Data$'] WHERE D3 = 'channel insights' AND A3 = 'travel'", function(err) {  
+        if (err) {  
+            console.log('I is error');}  
+        });  
+      
+        request.on('row', function(columns) {  
+            columns.forEach(function(column) {  
+              if (column.value === null) {  
+                console.log('NULL');  
+              } else {  
+                result+= column.value + " ";  
+              }  
+            });  
+            console.log(result);  
+            //result ="";  
+        });  
+  
+        request.on('done', function(rowCount, more) {  
+        console.log(rowCount + ' rows returned');  
+        });  
+        connection.execSql(request);  
+    } 
 
 // Create bot dialogs
 bot.dialog('/',[
@@ -33,7 +78,7 @@ bot.dialog('/',[
         session.send("I can definitely answer your questions about %s",session.userData.qtype);
     }
     else {
-        session.send("I don't know anything about %s",session.userData.qtype);
+        session.send("I don't know anything about %s and %s",session.userData.qtype,result);
         session.beginDialog('/');
     }
 }
