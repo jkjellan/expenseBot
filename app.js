@@ -79,7 +79,7 @@ bot.dialog('/',[
         session.send("I can definitely answer your questions about %s",session.userData.qtype);
     }
     else {
-        session.send("I don't know anything about %s and %s",session.userData.qtype,"Test String");
+        session.send("I don't know anything about %s and %s",session.userData.qtype,result);
         session.beginDialog('/');
     }
 }
