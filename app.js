@@ -1,6 +1,7 @@
 // Add your requirements
 var restify = require('restify');
 var builder = require('botbuilder');
+var tedious = require('tedious');
 
 // Setup Restify Server
 var server = restify.createServer();
@@ -14,41 +15,125 @@ var connector = new builder.ChatConnector({
     appId: process.env.MY_APP_ID, 
     appPassword: process.env.MY_APP_PASSWORD
 });
-
-
 var bot = new builder.UniversalBot(connector);
 server.post('/api/messages', connector.listen());
 
+//connect to database
+var Connection = tedious.Connection;  
+    var config = {  
+        userName: 'sqladmin',  
+        password: 'Pickspockets3',  
+        server: 'expensesbotserver.database.windows.net',  
+        // If you are on Microsoft Azure, you need this:  
+        options: {encrypt: true, database: 'expensesbotdb'}  
+    };  
+    var connection = new Connection(config);  
+    connection.on('connect', function(err) {  
+        // If no error, then good to proceed.  
+        console.log("Database Connected"); 
+    });  
+
+//query database
+    var Request = tedious.Request;  
+    var TYPES = tedious.TYPES;  
+  
+    var deptVar = "channel insights";
+    var acctVar = "travel";
+    var result = "";
+    
+    function executeStatement(callback) {  
+        var sqlQuery = "SELECT FORMAT(Sum(Plan$),'C','en-us') AS 'Currency Format' FROM [dbo].['PIXP Data$'] WHERE D3 = '" + deptVar + "'AND A3 = '" + acctVar + "'";
+              
+        request = new Request(sqlQuery, function(err) {  
+        if (err) {  
+            console.log('I is error');}  
+        });  
+      
+        request.on('row', function(columns) {  
+            columns.forEach(function(column) {  
+              if (column.value === null) {  
+                console.log('NULL');  
+              } else {  
+                result+= column.value + " ";  
+              }  
+            });
+            
+            //console.log(result);  
+            //result ="";
+            callback();  
+        });  
+  
+        request.on('done', function(rowCount, more) {  
+        console.log(rowCount + ' rows returned');  
+        });  
+        connection.execSql(request);  
+    }  
+    
 // Create bot dialogs
 bot.dialog('/',[
     function(session, args,next){
-        if(session.userData.qtype != 'expense' || session.userData.qtype != 'headcount'){
-            session.beginDialog('/qtype');
-        } else{
-            next();
-        }
-    },
-    function(session,results){
-    if(session.userData.qtype == 'expense' || session.userData.qtype == 'headcount' ){
-        session.send("I can definitely answer your questions about %s",session.userData.qtype);
+        session.beginDialog('/intro');
     }
-    else {
-        session.send("I don't know anything about %s",session.userData.qtype);
-        session.beginDialog('/');
-    }
-}
 ]);
 
-bot.dialog('/qtype', [
+bot.dialog('/intro', [
     
     function (session) {
-        builder.Prompts.text(session,"Hi, Do you want to know about expense or headcount?");
+        builder.Prompts.text(session,"Well hello there. How are you doing?");
     },
     function(session,results){
-        
-            session.userData.qtype = results.response;
-            session.endDialog();
-        
+        session.userData.doingWell = results.response;
+        session.send("That's nice...");       
+        builder.Prompts.text(session, "Would you like to see a magic trick?");
+    },
+    function(session,results){
+        session.userData.magic = results.response;
+        if(session.userData.magic == 'yes' || session.userData.magic == 'Yes'){
+            session.beginDialog('/magic');
+        }
+        else if(session.userData.magic == 'no' || session.userData.magic == 'No' ){
+            session.send("I guess this is goodbye, then");
+        }
+        else{
+            session.send("It's a simple yes or no question");
+        }   
+    }
+]);
+
+bot.dialog('/magic',[
+    function(session){
+        builder.Prompts.text(session, "Ok, give me the name of an Agency Insights department, such as Channel Insights");
+    },
+    function(session,results){
+        deptVar = results.response;
+        builder.Prompts.text(session,"Now give me the name of an expense category, such as Travel");
+    },
+    function(session,results){
+        acctVar = results.response;
+        result = "";
+        executeStatement(function(){
+            session.beginDialog('/answer');
+        });       
+        }
+    ]);
+
+bot.dialog('/answer',[
+    function(session){
+        session.send("The %s budget for %s in 2017 is %s",acctVar,deptVar,result);
+        builder.Prompts.text(session,"Would you like to see another trick?");
+    },
+    function(session,results){
+        if(results.response == 'yes' || results.response == 'Yes'){
+            session.beginDialog('/magic');
+        }
+        else if(results.response == 'no' || results.response == 'No'){
+            session.endDialog("Goodbye");
+        }
+        else {
+            session.send("It was a simple yes or no question");
+            session.endDialog("See ya");
+        }
+
     }
 ]);
 
