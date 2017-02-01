@@ -84,7 +84,7 @@ bot.dialog('/intro', [
     function(session,results){
         session.userData.doingWell = results.response;
         session.send("That's nice...");       
-        builder.Prompts.text(session, "Do you like magic?");
+        builder.Prompts.text(session, "Would you like to see a magic trick?");
     },
     function(session,results){
         session.userData.magic = results.response;
@@ -102,7 +102,7 @@ bot.dialog('/intro', [
 
 bot.dialog('/magic',[
     function(session){
-        builder.Prompts.text(session, "Give me the name of an Agency Insights department, such as Channel Insights");
+        builder.Prompts.text(session, "Ok, give me the name of an Agency Insights department, such as Channel Insights");
     },
     function(session,results){
         deptVar = results.response;
