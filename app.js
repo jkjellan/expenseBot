@@ -102,7 +102,7 @@ bot.dialog('/intro', [
 
 bot.dialog('/magic',[
     function(session){
-        builder.Prompts.text(session, "Give me the name of a Safeco department, such as Agency Insights");
+        builder.Prompts.text(session, "Give me the name of an Agency Insights department, such as Channel Insights");
     },
     function(session,results){
         deptVar = results.response;
