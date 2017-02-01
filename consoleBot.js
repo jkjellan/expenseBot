@@ -41,8 +41,9 @@ var Connection = tedious.Connection;
     var acctVar = "travel";
     var result = "";
     
-    function executeStatement() {  
-        var sqlQuery = "SELECT Sum(Plan$) FROM [dbo].['PIXP Data$'] WHERE D3 = '" + deptVar + "'AND A3 = '" + acctVar + "'";
+    function executeStatement(callback) {  
+        var sqlQuery = "SELECT FORMAT(Sum(Plan$),'C','en-us') AS 'Currency Format' FROM [dbo].['PIXP Data$'] WHERE D3 = '" + deptVar + "'AND A3 = '" + acctVar + "'";
+              
         request = new Request(sqlQuery, function(err) {  
         if (err) {  
             console.log('I is error');}  
@@ -55,9 +56,11 @@ var Connection = tedious.Connection;
               } else {  
                 result+= column.value + " ";  
               }  
-            });  
-            console.log(result);  
-            //result ="";  
+            });
+            
+            //console.log(result);  
+            //result ="";
+            callback();  
         });  
   
         request.on('done', function(rowCount, more) {  
@@ -108,13 +111,28 @@ bot.dialog('/magic',[
     function(session,results){
         acctVar = results.response;
         result = "";
-        executeStatement();
+        executeStatement(function(){
+            session.beginDialog('/answer');
+        });       
+        }
+    ]);
+
+bot.dialog('/answer',[
+    function(session){
         session.send("The %s budget for %s in 2017 is %s",acctVar,deptVar,result);
+        builder.Prompts.text(session,"Would you like to see another trick?");
+    },
+    function(session,results){
+        if(results.response == 'yes'){
+            session.beginDialog('/magic');
+        }
+        else if(results.response == 'no'){
+            session.endDialog("Goodbye");
+        }
+        else {
+            session.send("It was a simple yes or no question");
+            session.endDialog("See ya");
+        }
+
     }
-
-
-   
-
 ]);
-
-
