@@ -88,10 +88,10 @@ bot.dialog('/intro', [
     },
     function(session,results){
         session.userData.magic = results.response;
-        if(session.userData.magic == 'yes'){
+        if(session.userData.magic == 'yes' || session.userData.magic == 'Yes'){
             session.beginDialog('/magic');
         }
-        else if(session.userData.magic == 'no'){
+        else if(session.userData.magic == 'no' || session.userData.magic == 'No' ){
             session.send("I guess this is goodbye, then");
         }
         else{
@@ -123,10 +123,10 @@ bot.dialog('/answer',[
         builder.Prompts.text(session,"Would you like to see another trick?");
     },
     function(session,results){
-        if(results.response == 'yes'){
+        if(results.response == 'yes' || results.response == 'Yes'){
             session.beginDialog('/magic');
         }
-        else if(results.response == 'no'){
+        else if(results.response == 'no' || results.response == 'No'){
             session.endDialog("Goodbye");
         }
         else {
