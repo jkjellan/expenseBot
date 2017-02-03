@@ -28,7 +28,7 @@ bot.dialog('/', dialog);
 var Connection = tedious.Connection;  
     var config = {  
         userName: 'sqladmin',  
-        password: 'Pickspockets3',  
+        password: 'AIbotadmin1',
         server: 'expensesbotserver.database.windows.net',  
         // If you are on Microsoft Azure, you need this:  
         options: {encrypt: true, database: 'expensesbotdb'}  
