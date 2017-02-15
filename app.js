@@ -66,7 +66,7 @@ var Connection = tedious.Connection;
             
             //console.log(result);  
             //result ="";
-            callback();  
+            callback(); 
         });  
   
         request.on('done', function(rowCount, more) {  
@@ -145,7 +145,7 @@ var Connection = tedious.Connection;
 
 dialog.matches('builtin.intent.budget',[ 
     function(session){
-        session.send("The %s budget for %s in 2017 is %s",acctVar,deptVar,result);
+        session.send("The %s budget for %s in 2017 is %s",'acctVar','deptVar','result');
         builder.Prompts.text(session,"Would you like to see another trick?");
     },
     function(session,results){
