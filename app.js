@@ -20,8 +20,8 @@ server.post('/api/messages', connector.listen());
 
 var model = 'https://luis-actions.cloudapp.net/api/v1/botframework?app-id=0788ebe8-b8f3-4748-b59f-3d3298aae151&subscription-key=b7831c85b83244b5a42356a1c6374da4';
 var recognizer = new builder.LuisRecognizer(model);
-var dialog = new builder.IntentDialog({ recognizers: [recognizer] });
-bot.dialog('/', dialog);
+var intents = new builder.IntentDialog({ recognizers: [recognizer] });
+bot.dialog('/', intents);
 
 
 //connect to database
