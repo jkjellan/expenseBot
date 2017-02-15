@@ -143,28 +143,11 @@ var Connection = tedious.Connection;
 //     }
 // ]);
 
-dialog.matches('builtin.intent.budget',[ 
-    function(session){
-        session.send("The %s budget for %s in 2017 is %s",'acctVar','deptVar','result');
-        builder.Prompts.text(session,"Would you like to see another trick?");
-    },
-    function(session,results){
-        if(results.response == 'yes' || results.response == 'Yes'){
-            session.beginDialog('/magic');
-        }
-        else if(results.response == 'no' || results.response == 'No'){
-            session.endDialog("Goodbye");
-        }
-        else {
-            session.send("It was a simple yes or no question");
-            session.endDialog("See ya");
-        }
+intents.matches('budget','/intro');
+    intents.matches('None','/intro');
 
-    }
-]);
-
-
-server.get('/', restify.serveStatic({
- directory: __dirname,
- default: '/index.html'
-}));
+    bot.dialog('/intro',[
+        function (session) {
+        builder.Prompts.text(session,"Hello");
+        }
+    ]);
