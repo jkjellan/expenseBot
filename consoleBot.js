@@ -25,16 +25,12 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] });
 
 bot.dialog('/', intents);
 
-intents.matches('budget',function(session){
-    session.send('I want to know about the budget');
-})
+intents.matches('budget', [
+    function(session){
+    session.send('Test Test');
+    }   
+])
 
 intents.onDefault(builder.DialogAction.send("whatchyoutalkinbout"));
 
 
-
-    bot.dialog('/intro',[
-        function (session) {
-        session.send("LUIS is finally working");
-        }
-    ]);
