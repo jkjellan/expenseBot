@@ -18,11 +18,17 @@ var connector = new builder.ConsoleConnector({
 });
 var bot = new builder.UniversalBot(connector.listen());
 
+var model = 'https://luis-actions.cloudapp.net/api/v1/botframework?app-id=0788ebe8-b8f3-4748-b59f-3d3298aae151&subscription-key=b7831c85b83244b5a42356a1c6374da4';
+var recognizer = new builder.LuisRecognizer(model);
+var dialog = new builder.IntentDialog({ recognizers: [recognizer] });
+bot.dialog('/', dialog);
+
+
 //connect to database
 var Connection = tedious.Connection;  
     var config = {  
         userName: 'sqladmin',  
-        password: 'AIbotadmin1',  
+        password: 'AIbotadmin1',
         server: 'expensesbotserver.database.windows.net',  
         // If you are on Microsoft Azure, you need this:  
         options: {encrypt: true, database: 'expensesbotdb'}  
@@ -60,79 +66,30 @@ var Connection = tedious.Connection;
             
             //console.log(result);  
             //result ="";
-            callback();  
+            callback(); 
         });  
   
         request.on('done', function(rowCount, more) {  
         console.log(rowCount + ' rows returned');  
         });  
         connection.execSql(request);  
-    }  
-    
-// Create bot dialogs
-bot.dialog('/',[
-    function(session, args,next){
-        session.beginDialog('/intro');
-    }
-]);
+    };
 
-bot.dialog('/intro', [
-    
-    function (session) {
-        builder.Prompts.text(session,"Well hello there. How are you doing?");
-    },
-    function(session,results){
-        session.userData.doingWell = results.response;
-        session.send("That's nice...");       
-        builder.Prompts.text(session, "Do you like magic?");
-    },
-    function(session,results){
-        session.userData.magic = results.response;
-        if(session.userData.magic == 'yes'){
-            session.beginDialog('/magic');
-        }
-        else if(session.userData.magic == 'no'){
-            session.send("I guess this is goodbye, then");
-        }
-        else{
-            session.send("It's a simple yes or no question");
-        }   
-    }
-]);
-
-bot.dialog('/magic',[
+    dialog.matches('builtin.intent.budget',[ 
     function(session){
-        builder.Prompts.text(session, "Give me the name of a Safeco department, such as Agency Insights");
-    },
-    function(session,results){
-        deptVar = results.response;
-        builder.Prompts.text(session,"Now give me the name of an expense category, such as Travel");
-    },
-    function(session,results){
-        acctVar = results.response;
-        result = "";
-        executeStatement(function(){
-            session.beginDialog('/answer');
-        });       
-        }
-    ]);
-
-bot.dialog('/answer',[
-    function(session){
-        session.send("The %s budget for %s in 2017 is %s",acctVar,deptVar,result);
+        session.send("The %s budget for %s in 2017 is %s",'acctVar','deptVar','result');
         builder.Prompts.text(session,"Would you like to see another trick?");
     },
     function(session,results){
-        if(results.response == 'yes'){
+        if(results.response == 'yes' || results.response == 'Yes'){
             session.beginDialog('/magic');
         }
-        else if(results.response == 'no'){
+        else if(results.response == 'no' || results.response == 'No'){
             session.endDialog("Goodbye");
         }
         else {
             session.send("It was a simple yes or no question");
             session.endDialog("See ya");
         }
-
     }
 ]);
