@@ -143,11 +143,8 @@ var Connection = tedious.Connection;
 //     }
 // ]);
 
-intents.matches('budget','/intro');
-    intents.matches('None','/intro');
+intents.matches('budget',function(session){
+    session.send('I want to know about the budget');
+})
 
-    bot.dialog('/intro',[
-        function (session) {
-        builder.Prompts.text(session,"Hello");
-        }
-    ]);
+intents.onDefault(builder.DialogAction.send("whatchyoutalkinbout"));

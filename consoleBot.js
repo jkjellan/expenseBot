@@ -22,14 +22,19 @@ var bot = new builder.UniversalBot(connector.listen());
 var model = 'https://luis-actions.cloudapp.net/api/v1/botframework?app-id=0788ebe8-b8f3-4748-b59f-3d3298aae151&subscription-key=b7831c85b83244b5a42356a1c6374da4';
 var recognizer = new builder.LuisRecognizer(model);
 var intents = new builder.IntentDialog({ recognizers: [recognizer] });
+
 bot.dialog('/', intents);
 
+intents.matches('budget',function(session){
+    session.send('I want to know about the budget');
+})
 
-    intents.matches('budget','/intro');
-    intents.matches('None','/intro');
+intents.onDefault(builder.DialogAction.send("whatchyoutalkinbout"));
+
+
 
     bot.dialog('/intro',[
         function (session) {
-        builder.Prompts.text(session,"Hello");
+        session.send("LUIS is finally working");
         }
     ]);
