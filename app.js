@@ -80,7 +80,7 @@ var Connection = tedious.Connection;
 // intents.onDefault(builder.DialogAction.send("whatchyoutalkinbout"));
 
 //Create bot dialogs
-bot.dialog('/',[
+bot.dialog('api/messages',[
     function(session, args,next){
         session.beginDialog('/intro');
     }
