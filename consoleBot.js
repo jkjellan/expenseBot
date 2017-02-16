@@ -13,24 +13,19 @@ server.listen(process.env.PORT || 3979, function()
 
 // Create chat bot
 // var connector = new builder.ChatConnector
-var connector = new builder.ConsoleConnector({
-    userWelcomeMessage: 'User Welcome Message Works!'
-    
-});
-var bot = new builder.UniversalBot(connector.listen());
+var connector = new builder.ConsoleConnector().listen();
+var bot = new builder.UniversalBot(connector);
 
-var model = 'https://luis-actions.cloudapp.net/api/v1/botframework?app-id=0788ebe8-b8f3-4748-b59f-3d3298aae151&subscription-key=b7831c85b83244b5a42356a1c6374da4';
-var recognizer = new builder.LuisRecognizer(model);
+
+var LUISmodelURL = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/0788ebe8-b8f3-4748-b59f-3d3298aae151?subscription-key=b7831c85b83244b5a42356a1c6374da4';
+var recognizer = new builder.LuisRecognizer(LUISmodelURL);
 var intents = new builder.IntentDialog({ recognizers: [recognizer] });
-
 bot.dialog('/', intents);
 
-intents.matches('budget', [
-    function(session){
-    session.send('Test Test');
-    }   
-])
 
-intents.onDefault(builder.DialogAction.send("whatchyoutalkinbout"));
-
-
+intents.matches('budget',[
+    function (session, args, next) {
+        session.send('Welcome to the expense Bot!');
+    }]);
+console.log(recognizer);
+console.log(intents);

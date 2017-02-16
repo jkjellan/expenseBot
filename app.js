@@ -18,8 +18,8 @@ var connector = new builder.ChatConnector({
 var bot = new builder.UniversalBot(connector);
 server.post('/api/messages', connector.listen());
 
-var model = 'https://luis-actions.cloudapp.net/api/v1/botframework?app-id=0788ebe8-b8f3-4748-b59f-3d3298aae151&subscription-key=b7831c85b83244b5a42356a1c6374da4';
-var recognizer = new builder.LuisRecognizer(model);
+var LUISmodelURL = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/0788ebe8-b8f3-4748-b59f-3d3298aae151?subscription-key=b7831c85b83244b5a42356a1c6374da4';
+var recognizer = new builder.LuisRecognizer(LUISmodelURL);
 var intents = new builder.IntentDialog({ recognizers: [recognizer] });
 bot.dialog('/', intents);
 
@@ -143,8 +143,9 @@ var Connection = tedious.Connection;
 //     }
 // ]);
 
-intents.matches('budget',function(session){
-    session.send('I want to know about the budget');
-})
+intents.matches('budget',[
+    function (session, args, next) {
+        session.send('Welcome to the expense Bot!');
+    }]);
 
 intents.onDefault(builder.DialogAction.send("whatchyoutalkinbout"));
