@@ -74,7 +74,14 @@ var Connection = tedious.Connection;
         });  
         connection.execSql(request);  
     }  
-    
+
+intents.matches('budget',[
+    function (session, args, next) {
+        session.send('Welcome to the expense Bot!');
+    }]);
+
+intents.onDefault(builder.DialogAction.send("whatchyoutalkinbout"));
+
 // Create bot dialogs
 // bot.dialog('/',[
 //     function(session, args,next){
@@ -142,10 +149,3 @@ var Connection = tedious.Connection;
 
 //     }
 // ]);
-
-intents.matches('budget',[
-    function (session, args, next) {
-        session.send('Welcome to the expense Bot!');
-    }]);
-
-intents.onDefault(builder.DialogAction.send("whatchyoutalkinbout"));
