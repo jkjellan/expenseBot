@@ -76,10 +76,16 @@ bot.dialog('/', intents);
 
 intents.matches('budget',[
     function (session, args, next) {
-        acctVar = builder.EntityRecognizer.findEntity(args.entities, 'account').entity;
-        deptVar = builder.EntityRecognizer.findEntity(args.entities, 'department').entity;
-        yearVar = builder.EntityRecognizer.findEntity(args.entities, 'year').entity;
-        executeStatement(function(){
+        var account = builder.EntityRecognizer.findEntity(args.entities, 'account');
+        var department = builder.EntityRecognizer.findEntity(args.entities, 'department');
+        var year = builder.EntityRecognizer.findEntity(args.entities, 'year');
+        
+        acctVar = account.entity;
+        deptVar = department.entity;
+        yearVar = year.entity;
+        result = "";
+        
+        executeStatement(function(session){
             session.beginDialog('/answer');
         });
 }]);
