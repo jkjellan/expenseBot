@@ -76,23 +76,21 @@ bot.dialog('/', intents);
 
 intents.matches('budget',[
     function (session, args, next) {
-        session.send('Welcome to the expense Bot!');
-        acctVar = builder.EntityRecognizer.findEntity(args.entities, 'account');
-        deptVar = builder.EntityRecognizer.findEntity(args.entities, 'department');
-        yearVar = builder.EntityRecognizer.findEntity(args.entities, 'year');
+        acctVar = builder.EntityRecognizer.findEntity(args.entities, 'account').entity;
+        deptVar = builder.EntityRecognizer.findEntity(args.entities, 'department').entity;
+        yearVar = builder.EntityRecognizer.findEntity(args.entities, 'year').entity;
+    },
 
-        executeStatement(function(){
-            session.beginDialog('/answer');
-        });
-    }]);
+    
 
-bot.dialog('/answer',[
-    function(session){
+    function(session, results){
         session.send("The %s budget for %s in 2017 is %s",acctVar,deptVar,result);
-}]);
+        }
+    ]);
 
 
-intents.onDefault(builder.DialogAction.send("Ask me, 'What is the [travel] budget for [channel insights] in 2017'"));
+
+intents.onDefault(builder.DialogAction.send("Ask me, 'What is the travel budget for channel insights in 2017'"));
 
 
 
