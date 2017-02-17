@@ -80,9 +80,9 @@ intents.matches('budget',[
         var department = builder.EntityRecognizer.findEntity(args.entities, 'department');
         var year = builder.EntityRecognizer.findEntity(args.entities, 'year');
         
-        acctVar = account.entity;
-        deptVar = department.entity;
-        yearVar = year.entity;
+        acctVar = account;
+        deptVar = department;
+        yearVar = year;
         result = "";
         
         executeStatement(function(session){
