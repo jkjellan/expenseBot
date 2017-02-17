@@ -41,7 +41,8 @@ var Connection = tedious.Connection;
     var deptVar = "channel insights";
     var acctVar = "travel";
     var result = "";
-    
+    var yearVar = "2017";
+
     function executeStatement(callback) {  
         var sqlQuery = "SELECT FORMAT(Sum(Plan$),'C','en-us') AS 'Currency Format' FROM [dbo].['PIXP Data$'] WHERE D3 = '" + deptVar + "'AND A3 = '" + acctVar + "'";
               
@@ -76,9 +77,24 @@ bot.dialog('/', intents);
 intents.matches('budget',[
     function (session, args, next) {
         session.send('Welcome to the expense Bot!');
+        acctVar = builder.EntityRecognizer.findEntity(args.entities, 'account');
+        deptVar = builder.EntityRecognizer.findEntity(args.entities, 'department');
+        yearVar = builder.EntityRecognizer.findEntity(args.entities, 'year');
+
+        executeStatement(function(){
+            session.beginDialog('/answer');
+        });
     }]);
 
-intents.onDefault(builder.DialogAction.send("whatchyoutalkinbout"));
+bot.dialog('/answer',[
+    function(session){
+        session.send("The %s budget for %s in 2017 is %s",acctVar,deptVar,result);
+}]);
+
+
+intents.onDefault(builder.DialogAction.send("Ask me, 'What is the [travel] budget for [channel insights] in 2017'"));
+
+
 
 //Create bot dialogs
 // bot.dialog('/',[
