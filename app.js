@@ -78,7 +78,7 @@ intents.matches('budget',[
         session.send('Welcome to the expense Bot!');
     }]);
 
-// intents.onDefault(builder.DialogAction.send("whatchyoutalkinbout"));
+intents.onDefault(builder.DialogAction.send("whatchyoutalkinbout"));
 
 //Create bot dialogs
 // bot.dialog('/',[
