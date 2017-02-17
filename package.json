@@ -2,8 +2,8 @@
   "name": "expensesbot",
   "version": "1.0.0",
   "description": "Expense bot to answer expense questions",
-  "main": "appLUIS.js",
-  "entry point": "appLUIS.js",
+  "main": "app.js",
+  "entry point": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

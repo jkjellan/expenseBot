@@ -89,7 +89,7 @@ bot.dialog('/',[
 bot.dialog('/intro', [
     
     function (session) {
-        builder.Prompts.text(session,"Well hello there. How are you doing?");
+        builder.Prompts.text(session,"Well hello there. This is the old nonLUIS version. How are you doing?");
     },
     function(session,results){
         session.userData.doingWell = results.response;
