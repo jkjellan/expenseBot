@@ -79,15 +79,15 @@ intents.matches('budget',[
         acctVar = builder.EntityRecognizer.findEntity(args.entities, 'account').entity;
         deptVar = builder.EntityRecognizer.findEntity(args.entities, 'department').entity;
         yearVar = builder.EntityRecognizer.findEntity(args.entities, 'year').entity;
-    },
+        executeStatement(function(){
+            session.beginDialog('/answer');
+        });
+}]);
 
-    
-
-    function(session, results){
+bot.dialog('/answer',[
+    function(session){
         session.send("The %s budget for %s in 2017 is %s",acctVar,deptVar,result);
-        }
-    ]);
-
+}]);
 
 
 intents.onDefault(builder.DialogAction.send("Ask me, 'What is the travel budget for channel insights in 2017'"));
