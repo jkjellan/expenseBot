@@ -27,8 +27,8 @@ server.post('/api/messages', connector.listen());
 var Connection = tedious.Connection;  
     var config = {  
         userName: 'sqladmin',  
-        password: 'AIbotadmin1',
-        server: 'expensesbotserver.database.windows.net',  
+        password: 'DIbotadmin1',
+        server: 'distributioninsightsserver.database.windows.net',  
         // If you are on Microsoft Azure, you need this:  
         options: {encrypt: true, database: 'expensesbotdb'}  
     };  
