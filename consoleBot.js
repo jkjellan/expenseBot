@@ -28,4 +28,3 @@ intents.matches('budget',[
         session.send('Welcome to the expense Bot!');
     }]);
 console.log(recognizer);
-console.log(intents);
