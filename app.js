@@ -18,10 +18,6 @@ var connector = new builder.ChatConnector({
 var bot = new builder.UniversalBot(connector);
 server.post('/api/messages', connector.listen());
 
-// var LUISmodelURL = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/0788ebe8-b8f3-4748-b59f-3d3298aae151?subscription-key=b7831c85b83244b5a42356a1c6374da4';
-// var recognizer = new builder.LuisRecognizer(LUISmodelURL);
-// var intents = new builder.IntentDialog({ recognizers: [recognizer] });
-// bot.dialog('/', intents);
 
 //connect to database
 var Connection = tedious.Connection;  
@@ -42,10 +38,7 @@ var Connection = tedious.Connection;
     var Request = tedious.Request;  
     var TYPES = tedious.TYPES;  
   
-    var deptVar = "channel insights";
-    var acctVar = "travel";
-    var result = "";
-    
+
     function executeStatement(callback) {  
         var sqlQuery = "SELECT FORMAT(Sum(Plan$),'C','en-us') AS 'Currency Format' FROM [dbo].['PIXP Data$'] WHERE D3 = '" + deptVar + "'AND A3 = '" + acctVar + "'";
               
@@ -70,85 +63,115 @@ var Connection = tedious.Connection;
         console.log(rowCount + ' rows returned');  
         });  
         connection.execSql(request);  
-    }  
+    };  
 
-// intents.matches('budget',[
-//     function (session, args, next) {
-//         session.send('Welcome to the expense Bot!');
-//     }]);
+var LUISmodelURL = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/0788ebe8-b8f3-4748-b59f-3d3298aae151?subscription-key=b7831c85b83244b5a42356a1c6374da4';
+var recognizer = new builder.LuisRecognizer(LUISmodelURL);
+var intents = new builder.IntentDialog({ recognizers: [recognizer] });
+bot.dialog('/', intents);
 
-// intents.onDefault(builder.DialogAction.send("whatchyoutalkinbout"));
+var deptVar = "";
+var acctVar = "";
+var result = "";
+var yearVar = "2017";
 
-//Create bot dialogs
-bot.dialog('/',[
-    function(session, args,next){
-        session.beginDialog('/intro');
-    }
-]);
+intents.matches('budget',[
+    function (session, args, next) {
+        var account = builder.EntityRecognizer.findEntity(args.entities, 'account');
+        var department = builder.EntityRecognizer.findEntity(args.entities, 'department');
+        var year = builder.EntityRecognizer.findEntity(args.entities, 'year');
 
-bot.dialog('/intro', [
-    
-    function (session) {
-        builder.Prompts.text(session,"Well hello there. This is the old nonLUIS version. How are you doing?");
-    },
-    function(session,results){
-        session.userData.doingWell = results.response;
-        session.send("That's nice...");       
-        builder.Prompts.text(session, "Would you like to see a magic trick?");
-    },
-    function(session,results){
-        session.userData.magic = results.response;
-        if(session.userData.magic == 'yes' || session.userData.magic == 'Yes'){
-            session.beginDialog('/magic');
-        }
-        else if(session.userData.magic == 'no' || session.userData.magic == 'No' ){
-            session.send("I guess this is goodbye, then");
-        }
-        else{
-            session.send("It's a simple yes or no question");
-        }   
-    }
-]);
-
-bot.dialog('/magic',[
-    function(session){
-        builder.Prompts.text(session, "Ok, give me the name of an Agency Insights department, such as Channel Insights");
-    },
-    function(session,results){
-        deptVar = results.response;
-        builder.Prompts.text(session,"Now give me the name of an expense category, such as Travel");
-    },
-    function(session,results){
-        acctVar = results.response;
-        result = "";
+        acctVar = account.entity;
+        deptVar = department.entity;
+        yearVar = year;
+        
+        console.log(account);
+       
         executeStatement(function(){
             session.beginDialog('/answer');
-        });       
-        }
-    ]);
+        });
+    }]);
 
 bot.dialog('/answer',[
-    function(session){
-        session.send("The %s budget for %s in 2017 is %s",acctVar,deptVar,result);
-        builder.Prompts.text(session,"Would you like to see another trick?");
-    },
-    function(session,results){
-        if(results.response == 'yes' || results.response == 'Yes'){
-            session.beginDialog('/magic');
+        function(session){
+            session.send("The %s budget for %s in 2017 is %s",acctVar,deptVar,result);       
         }
-        else if(results.response == 'no' || results.response == 'No'){
-            session.endDialog("Goodbye");
-        }
-        else {
-            session.send("It was a simple yes or no question");
-            session.endDialog("See ya");
-        }
+        ]);
 
-    }
-]);
+
+intents.onDefault(builder.DialogAction.send("Ask me, 'What is the travel budget for channel insights in 2017'"));
+
+
+
+//Create bot dialogs
+// bot.dialog('/',[
+//     function(session, args,next){
+//         session.beginDialog('/intro');
+//     }
+// ]);
+
+// bot.dialog('/intro', [
+    
+//     function (session) {
+//         builder.Prompts.text(session,"Well hello there. This is the LUIS version. How are you doing?");
+//     },
+//     function(session,results){
+//         session.userData.doingWell = results.response;
+//         session.send("That's nice...");       
+//         builder.Prompts.text(session, "Would you like to see a magic trick?");
+//     },
+//     function(session,results){
+//         session.userData.magic = results.response;
+//         if(session.userData.magic == 'yes' || session.userData.magic == 'Yes'){
+//             session.beginDialog('/magic');
+//         }
+//         else if(session.userData.magic == 'no' || session.userData.magic == 'No' ){
+//             session.send("I guess this is goodbye, then");
+//         }
+//         else{
+//             session.send("It's a simple yes or no question");
+//         }   
+//     }
+// ]);
+
+// bot.dialog('/magic',[
+//     function(session){
+//         builder.Prompts.text(session, "Ok, give me the name of an Agency Insights department, such as Channel Insights");
+//     },
+//     function(session,results){
+//         deptVar = results.response;
+//         builder.Prompts.text(session,"Now give me the name of an expense category, such as Travel");
+//     },
+//     function(session,results){
+//         acctVar = results.response;
+//         result = "";
+//         executeStatement(function(){
+//             session.beginDialog('/answer');
+//         });       
+//         }
+//     ]);
+
+// bot.dialog('/answer',[
+//     function(session){
+//         session.send("The %s budget for %s in 2017 is %s",acctVar,deptVar,result);
+//         builder.Prompts.text(session,"Would you like to see another trick?");
+//     },
+//     function(session,results){
+//         if(results.response == 'yes' || results.response == 'Yes'){
+//             session.beginDialog('/magic');
+//         }
+//         else if(results.response == 'no' || results.response == 'No'){
+//             session.endDialog("Goodbye");
+//         }
+//         else {
+//             session.send("It was a simple yes or no question");
+//             session.endDialog("See ya");
+//         }
+
+//     }
+// ]);
 
 server.get('/', restify.serveStatic({
  directory: __dirname,
  default: '/index.html'
 }));
-
