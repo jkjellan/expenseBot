@@ -78,6 +78,7 @@ var yearVar = "2017";
 
 intents.matches('budget',[
     function (session, args, next) {
+        result = "";
         var account = builder.EntityRecognizer.findEntity(args.entities, 'account');
         var department = builder.EntityRecognizer.findEntity(args.entities, 'department');
         //var year = builder.EntityRecognizer.findEntity(args.entities, 'year');
@@ -96,7 +97,9 @@ intents.matches('budget',[
 bot.dialog('/answer',[
         function(session){
             session.send("The %s budget for %s in 2017 is %s",acctVar,deptVar,result);
+            session.beginDialog('/');
         }
+
         ]);
 
 
